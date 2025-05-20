@@ -39,3 +39,18 @@ def convert_van_trees_coords_to_matlab_coords(
     )
 
     return (np.rad2deg(phi_new), np.rad2deg(theta_new))
+
+
+def convert_matlab_to_van_trees_coords(
+        azimuth_deg: float, elevation_deg: float
+) -> tuple[float, float]:
+    azimuth_rad = np.deg2rad(azimuth_deg)
+    elevation_rad = np.deg2rad(elevation_deg)
+
+    if azimuth_rad ==0 and elevation_rad == 0:
+        return (0,0)
+
+    phi = np.atan(np.tan(elevation_rad) / np.sin(azimuth_rad))
+    theta = np.atan(np.tan(azimuth_rad) / np.cos(phi))
+
+    return (np.rad2deg(phi), np.rad2deg(theta))

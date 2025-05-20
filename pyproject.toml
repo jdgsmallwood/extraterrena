@@ -46,6 +46,28 @@ extra-dependencies = [
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/spatial_filtering tests}"
 
+[tool.hatch.envs.docs]
+dependencies = [
+  "sphinx",
+  "myst-parser",
+  "sphinx-autobuild",
+  "sphinx-math-dollar",
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "sphinx-build -b html docs docs/_build"
+autobuild = "sphinx-autobuild docs docs/_build"
+
+[tool.hatch.envs.manim]
+dependencies = [
+  "manim",
+]
+
+[tool.hatch.envs.manim.scripts]
+render = "manim -pql scenes/van_trees_matlab.py VectorProjection3D"
+
+
+
 [tool.coverage.run]
 source_pkgs = ["spatial_filtering", "tests"]
 branch = true
