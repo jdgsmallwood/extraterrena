@@ -182,3 +182,7 @@ cython_debug/
 
 .vscode/
 media/
+_output/
+output.png
+*.blend1
+.DS_STORE

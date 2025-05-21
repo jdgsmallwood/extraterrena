@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def convert_van_trees_coords_to_matlab_coords(
@@ -54,3 +55,18 @@ def convert_matlab_to_van_trees_coords(
     theta = np.atan(np.tan(azimuth_rad) / np.cos(phi))
 
     return (np.rad2deg(phi), np.rad2deg(theta))
+
+
+def plot_antenna_response(
+        array, weights: np.ndarray, wavelength
+):
+    theta = np.linspace(-4*np.pi, 4 * np.pi, 4 * 360) 
+    
+    
+    response = np.array([array.steering_vector([0,np.pi/2 - t], wavelength) for t in theta])
+    response = weights.T @ response.T
+    plt.clf()
+    plt.plot([np.pi/2 - t for t in theta],response)
+    plt.savefig('output.png')
+
+
