@@ -266,8 +266,8 @@ class TestRectangularArray:
         theta = 30;
 
 
-        phi_new = atand(tand(theta) * cosd(phi));
-        theta_new = atand(sind(theta) * sind(phi) / sqrt(sind(theta)^2 * cosd(phi)^2 + cosd(theta)^2));
+        phi_new = atand(tand(theta) * sind(phi));
+        theta_new = acosd(sqrt(sind(theta)^2 * sind(phi)^2 + cosd(theta)^2));
 
 
         fc = 1e9;
