@@ -1,0 +1,29 @@
+name: Blender Render and Save to Assets
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    
+    container:
+      image: linuxserver/blender:latest
+      options: --user 1000:1000 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run Blender Render in Docker
+      run: |
+        mkdir _output && blender -b scenes/matlab.blend -f MPEG -o _output/matlab_ -a
+
+    - name: Upload Rendered Output to GitHub Assets
+      uses: actions/upload-artifact@v3
+      with:
+        name: rendered-matlab
+        path: _output/matlab_*
