@@ -23,7 +23,7 @@ jobs:
         mkdir _output && blender -b scenes/matlab.blend -f MPEG -o _output/matlab_ -a
 
     - name: Upload Rendered Output to GitHub Assets
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rendered-matlab
         path: _output/matlab_*
