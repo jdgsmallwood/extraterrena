@@ -12,7 +12,7 @@ jobs:
     
     container:
       image: linuxserver/blender:latest
-      options: --user 1000:1000 
+      options: --user root 
 
     steps:
     - name: Checkout code
