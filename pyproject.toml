@@ -31,12 +31,14 @@ dependencies = [
   "ruff",
   "hypothesis",
   "matplotlib",
+  "jupyterlab",
+  "polars",
 ]
 
 [project.urls]
-Documentation = "https://github.com/Justin Smallwood/spatial-filtering#readme"
-Issues = "https://github.com/Justin Smallwood/spatial-filtering/issues"
-Source = "https://github.com/Justin Smallwood/spatial-filtering"
+Documentation = "https://github.com/jdgsmallwood/spatial-filtering#readme"
+Issues = "https://github.com/jdgsmallwood/spatial-filtering/issues"
+Source = "https://github.com/jdgsmallwood/spatial-filtering"
 
 [tool.hatch.version]
 path = "src/spatial_filtering/__about__.py"

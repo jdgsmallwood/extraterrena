@@ -11,11 +11,11 @@ class BeamformerWeightingScheme(ABC):
 
 
 class UniformWeights(BeamformerWeightingScheme):
-    """Simplest weighting scheme. Described in Van Trees sections 3.1.1.1
-    
-    """
+    """Simplest weighting scheme. Described in Van Trees sections 3.1.1.1"""
 
-    def update_weights(self, acm: np.ndarray, current_weights:np.ndarray) -> np.ndarray:
+    def update_weights(
+        self, acm: np.ndarray, current_weights: np.ndarray
+    ) -> np.ndarray:
         return np.ones(len(current_weights)) / len(current_weights)
 
 

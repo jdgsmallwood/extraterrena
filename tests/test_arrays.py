@@ -6,6 +6,53 @@ from spatial_filtering import arrays, constants
 EPS = 0.0001
 
 
+class TestArray:
+
+    def test_array_list_positions(self):
+        """Test that instantiation works if a list is provided for positions."""
+
+        array = arrays.Array([0.1 * n for n in range(5)])
+        assert isinstance(array.positions, np.ndarray)
+
+
+class TestUniformLinearArray:
+    spacing = 1
+    atol = 0.01
+
+    def test_linear_array_positioning_odd(self):
+        num_antennas = 3
+
+        array = arrays.UniformLinearArray(num_antennas, self.spacing)
+        assert np.allclose(
+            array.positions,
+            np.array([[-1, 0, 0], [0, 0, 0], [1, 0, 0]]),
+            atol=self.atol,
+        )
+        assert array.num_antennas == num_antennas
+
+    def test_linear_array_positioning_even(self):
+        num_antennas = 2
+
+        array = arrays.UniformLinearArray(num_antennas, self.spacing)
+
+        assert np.allclose(
+            array.positions, np.array([[-0.5, 0, 0], [0.5, 0, 0]]), atol=self.atol
+        )
+        assert array.num_antennas == num_antennas
+
+    def test_linear_array_positioning_even_4(self):
+        num_antennas = 4
+
+        array = arrays.UniformLinearArray(num_antennas, self.spacing)
+
+        assert np.allclose(
+            array.positions,
+            np.array([[-1.5, 0, 0], [-0.5, 0, 0], [0.5, 0, 0], [1.5, 0, 0]]),
+            atol=self.atol,
+        )
+        assert array.num_antennas == num_antennas
+
+
 class TestLinearArray:
     freq = 1e9
     wavelength = constants.c / freq

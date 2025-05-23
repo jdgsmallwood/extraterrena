@@ -3,6 +3,9 @@ import numpy as np
 
 class Array:
     def __init__(self, positions: np.ndarray):
+        if isinstance(positions, list):
+            positions = np.array(positions)
+
         if len(positions.shape) == 1:
             positions = positions[:, np.newaxis]
 
@@ -16,6 +19,8 @@ class Array:
                 for position in positions
             ]
         )
+
+        self.num_antennas = positions.shape[0]
 
     def steering_vector(
         self, theta_radians: list[float], wavelength: float
@@ -50,3 +55,34 @@ class Array:
                 for positions in self.positions
             ]
         ).astype(np.complex128)
+
+
+class UniformLinearArray(Array):
+    """A special case of an array that is set out in a straight line with equal spacing.
+
+    Elements are laid on the x-axis and are centered around the origin.
+
+    """
+
+    def __init__(self, num_antennas: int, spacing: float):
+        endpoint = (
+            int(num_antennas / 2)
+            if num_antennas % 2 == 0
+            else int((num_antennas - 1) / 2)
+        )
+        if num_antennas % 2 == 0:
+            array_positions = [n * spacing for n in range(-endpoint, endpoint)]
+            array_positions = [a + spacing / 2 for a in array_positions]
+
+        else:
+            array_positions = [n * spacing for n in range(-endpoint, endpoint + 1)]
+
+        super().__init__(array_positions)
+
+    def steering_vector(self, theta_radians: float, wavelength: float) -> np.ndarray:
+        """Gets the steering vector for a uniform linear array. For a uniform linear array the azimuth
+        has no bearing on the steering vector, only the elevation.
+
+        """
+
+        return super().steering_vector([0, theta_radians], wavelength)
