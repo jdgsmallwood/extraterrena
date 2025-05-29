@@ -18,6 +18,8 @@ class TestArray:
 class TestUniformLinearArray:
     spacing = 1
     atol = 0.01
+    frequency = 1e9
+    wavelength = constants.c / frequency
 
     def test_linear_array_positioning_odd(self):
         num_antennas = 3
@@ -51,6 +53,32 @@ class TestUniformLinearArray:
             atol=self.atol,
         )
         assert array.num_antennas == num_antennas
+
+    def test_nf_steering_vector(self):
+        num_antennas = 5
+        array = arrays.UniformLinearArray(num_antennas, self.spacing)
+
+        r = 0
+        theta = 0
+        phi = 0
+
+        nf_steer_vec = array.nf_steering_vector(r, [phi, theta], self.wavelength)
+
+        assert isinstance(nf_steer_vec, np.ndarray)
+        assert nf_steer_vec.shape == (5,)
+        assert np.allclose(
+            nf_steer_vec,
+            np.array(
+                [
+                    np.exp(-1j * 2 * np.pi * 2 * 1 / self.wavelength),
+                    np.exp(-1j * 2 * np.pi * 1 / self.wavelength),
+                    1,
+                    np.exp(-1j * 2 * np.pi * 1 / self.wavelength),
+                    np.exp(-1j * 2 * np.pi * 2 / self.wavelength),
+                ]
+            ),
+            atol=self.atol,
+        )
 
 
 class TestLinearArray:

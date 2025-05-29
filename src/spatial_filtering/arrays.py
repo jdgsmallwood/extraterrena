@@ -56,6 +56,32 @@ class Array:
             ]
         ).astype(np.complex128)
 
+    def nf_steering_vector(
+        self, r: float, angles_radians: list[float], wavelength: float
+    ):
+        """Creates the steering vector for the array based on a near-field
+        source.
+
+        This requires the distance and the angle to the near-field source.
+        r = distance to source in m.
+        """
+        phi, theta = angles_radians
+        distances = np.linalg.norm(
+            self.positions
+            - r
+            * np.array(
+                [
+                    np.sin(theta) * np.cos(phi),
+                    np.sin(theta) * np.sin(phi),
+                    np.cos(theta),
+                ]
+            ),
+            axis=1,
+        )
+
+        steer = np.exp(-1j * 2 * np.pi * distances / wavelength)
+        return steer
+
 
 class UniformLinearArray(Array):
     """A special case of an array that is set out in a straight line with equal spacing.
