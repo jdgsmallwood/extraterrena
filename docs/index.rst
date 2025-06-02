@@ -15,5 +15,6 @@ documentation for details.
    :maxdepth: 2
    :caption: Contents:
 
+   source/modules.rst
+   source/spatial_filtering.rst
    van_trees_vs_matlab.rst
-

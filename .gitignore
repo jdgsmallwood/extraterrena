@@ -186,3 +186,5 @@ _output/
 output.png
 *.blend1
 .DS_STORE
+
+notebooks/iframe_figures/*
