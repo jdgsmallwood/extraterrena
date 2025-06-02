@@ -35,6 +35,8 @@ dependencies = [
   "polars",
   "fastexcel",
   "openpyxl",
+  "isort",
+  "scipy",
 ]
 
 [project.urls]

@@ -188,3 +188,7 @@ output.png
 .DS_STORE
 
 notebooks/iframe_figures/*
+.~lock*
+*.bsp
+*.dada
+dadanalyse.py

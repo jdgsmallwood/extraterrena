@@ -18,10 +18,11 @@ class Filter(ABC):
 class NullEigenvalueFilter(Filter):
     """Adjusts the covariance matrix by nulling the largest eigenvalues.
 
-    :param Filter: 
+    :param Filter:
     :type Filter: _type_
     """
-    def filter(self, acm: np.ndarray, num_eigenvalues: int = 1)-> np.ndarray:
+
+    def filter(self, acm: np.ndarray, num_eigenvalues: int = 1) -> np.ndarray:
         """Adjusts the covariance matrix by nulling the largest eigenvalue.
 
         :param acm: Array covariance matrix to adjust.
@@ -41,26 +42,29 @@ class NullEigenvalueFilter(Filter):
 
 class ShrinkEigenvalueFilter(Filter):
     """Shrinks largest eigenvalues of array covariance matrix instead of nulling them.
-    
+
     Follows the methodology set out in Kocz (2010)
 
     :param Filter: _description_
     :type Filter: _type_
     """
+
     def filter(self, acm: np.ndarray, num_eigenvalues: int = 1) -> np.ndarray:
-        """Shrinks the largest num_eigenvalues eigenvalues to the average of the 
+        """Shrinks the largest num_eigenvalues eigenvalues to the average of the
         remaining eigenvalues.
 
         :param acm: Array covariance matrix to be adjusted.
         :type acm: np.ndarray
         :param num_eigenvalues: Number of eigenvalues to shrink. Must be positive and less than number of rows of acm.
         :type num_eigenvalues: int
-        :return: Array covariance matrix 
+        :return: Array covariance matrix
         :rtype: np.ndarray
         """
+
+        if num_eigenvalues <= 0:
+            raise ValueError("Number of eigenvalues to shrink should be positive.")
         eigenvalues, eigenvectors = np.linalg.eigh(acm)
         mean_remaining_eigenvalues = np.mean(eigenvalues[:-num_eigenvalues])
-        
-        
+
         eigenvalues[-num_eigenvalues:] = mean_remaining_eigenvalues
         return eigenvectors @ np.diag(eigenvalues) @ eigenvectors.conj().T

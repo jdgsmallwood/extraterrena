@@ -48,6 +48,7 @@ def test_null_eigenvalue_filter(acm_test):
     assert np.allclose(original_eigenvalues[:-1], new_eigenvalues[1:])
     assert np.isclose(new_eigenvalues[0], 0)
 
+
 def test_null_eigenvalue_filter_two_eigenvalues(acm_test):
     original_eigenvalues, _ = np.linalg.eigh(acm_test)
     corrected_acm = filters.NullEigenvalueFilter().filter(acm_test, 2)
@@ -61,13 +62,19 @@ def test_null_eigenvalue_filter_two_eigenvalues(acm_test):
     assert np.isclose(new_eigenvalues[1], 0)
 
 
-def test_null_eigenvalue_filter_throws_error_if_negative_number_of_eigenvalues(acm_test):
+def test_null_eigenvalue_filter_throws_error_if_negative_number_of_eigenvalues(
+    acm_test,
+):
     with pytest.raises(ValueError):
         filters.NullEigenvalueFilter().filter(acm_test, -1)
 
-def test_shrink_eigenvalue_filter_throws_error_if_negative_number_of_eigenvalues(acm_test):
+
+def test_shrink_eigenvalue_filter_throws_error_if_negative_number_of_eigenvalues(
+    acm_test,
+):
     with pytest.raises(ValueError):
         filters.ShrinkEigenvalueFilter().filter(acm_test, -1)
+
 
 def test_shrink_eigenvalue_filter(acm_test):
     original_eigenvalues, _ = np.linalg.eigh(acm_test)
