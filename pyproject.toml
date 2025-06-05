@@ -40,6 +40,9 @@ dependencies = [
   "xlsxwriter",
   "skyfield",
   "astropy",
+  "plotly",
+  "tqdm",
+  "loguru",
 ]
 
 [project.urls]

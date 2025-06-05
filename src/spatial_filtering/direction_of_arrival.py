@@ -2,7 +2,9 @@ import numpy as np
 import polars as pl
 from spatial_filtering import arrays
 from abc import ABC
-
+from tqdm import tqdm
+import itertools
+from loguru import logger
 
 class MUSICBase(ABC):
 
@@ -143,14 +145,25 @@ class MUSICDOA2D(MUSICBase):
 
         noise_subspace_acm = evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
         output = []
-        for phi in phi_range:
-            for theta in theta_range:
-                steer_vec = array.steering_vector(
-                    [np.deg2rad(phi), np.deg2rad(theta)], wavelength
-                )
 
-                Q = self.calc_q(steer_vec, noise_subspace_acm)
+        THRESHOLD_SET = False        
+        threshold = 0
+        for phi, theta in tqdm(itertools.product(phi_range, theta_range), total=len(phi_range) * len(theta_range)):
+            steer_vec = array.steering_vector(
+                [np.deg2rad(phi), np.deg2rad(theta)], wavelength
+            )
+
+            Q = self.calc_q(steer_vec, noise_subspace_acm)
+            
+            if not THRESHOLD_SET or Q > threshold:
                 output.append({"phi": phi, "theta": theta, "Q": Q})
+            
+            if len(output) > 10_000 and not THRESHOLD_SET:
+                # To avoid adding millions of records - only record if it's in the top 40% of 
+                # observations seen thus far.
+                THRESHOLD_SET = True
+                threshold = pl.from_records(output)["Q"].quantile(0.6)
+                logger.info("Threshold set")
 
         output = pl.from_records(output)
         output = self.convert_to_dbs(output)

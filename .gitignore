@@ -192,3 +192,5 @@ notebooks/iframe_figures/*
 *.bsp
 *.dada
 dadanalyse.py
+*.parquet
+iframe_figures/
