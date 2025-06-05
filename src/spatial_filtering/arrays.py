@@ -26,7 +26,7 @@ class Array:
         self, theta_radians: list[float], wavelength: float
     ) -> np.ndarray:
         """
-        This should be [az, el]
+        This should be [phi, theta]
 
         Refs:
         https://www.antenna-theory.com/definitions/wavevector.php

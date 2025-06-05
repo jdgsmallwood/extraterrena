@@ -37,6 +37,9 @@ dependencies = [
   "openpyxl",
   "isort",
   "scipy",
+  "xlsxwriter",
+  "skyfield",
+  "astropy",
 ]
 
 [project.urls]
