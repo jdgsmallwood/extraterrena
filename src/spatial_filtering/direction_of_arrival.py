@@ -6,10 +6,9 @@ from tqdm import tqdm
 import itertools
 from loguru import logger
 
-class MUSICBase(ABC):
 
-    def calc_q(
-        self, steer_vec: np.ndarray, noise_subspace_acm: np.ndarray,
+def calc_q(
+        steer_vec: np.ndarray, noise_subspace_acm: np.ndarray,
     ) -> float:
         """Calculates the Q factor for a particular steering vector and number of interferers.
 
@@ -25,12 +24,13 @@ class MUSICBase(ABC):
         """
         Q = 1 / np.abs(
             steer_vec.conj().T
-            #@ eigenvectors[:, :-num_interferers]
-            #@ eigenvectors[:, :-num_interferers].conj().T
             @ noise_subspace_acm
             @ steer_vec
         )
         return Q
+
+
+class MUSICBase(ABC):
 
     def convert_to_dbs(self, df: pl.DataFrame, column_name: str = "Q") -> pl.DataFrame:
         """Converts column of dataframe to decibels.
@@ -47,7 +47,7 @@ class MUSICBase(ABC):
             (
                 10 * pl.col(column_name).abs().log10()
                 - 10 * pl.col(column_name).abs().max().log10()
-            ).alias(column_name)
+            ).alias(column_name + "_db")
         )
 
 
@@ -90,7 +90,7 @@ class MUSICDOA1D(MUSICBase):
         output = []
         for theta in theta_range:
             steer_vec = array.steering_vector(np.deg2rad(theta), wavelength).T
-            Q = self.calc_q(steer_vec, noise_subspace_acm)
+            Q = calc_q(steer_vec, noise_subspace_acm)
             output.append({"theta": theta, "Q": Q})
         output = pl.from_records(output)
         output = self.convert_to_dbs(output)
@@ -153,7 +153,7 @@ class MUSICDOA2D(MUSICBase):
                 [np.deg2rad(phi), np.deg2rad(theta)], wavelength
             )
 
-            Q = self.calc_q(steer_vec, noise_subspace_acm)
+            Q = calc_q(steer_vec, noise_subspace_acm)
             
             if not THRESHOLD_SET or Q > threshold:
                 output.append({"phi": phi, "theta": theta, "Q": Q})
@@ -236,7 +236,7 @@ class MUSICNF2D(MUSICBase):
                         r, [np.deg2rad(phi), np.deg2rad(theta)], wavelength
                     )
 
-                    Q = self.calc_q(steer_vec, noise_subspace_acm)
+                    Q = calc_q(steer_vec, noise_subspace_acm)
 
                     output.append({"r": r, "theta": theta, "phi": phi, "Q": Q})
 
