@@ -23,7 +23,7 @@ class TestMusicDoA1D:
 
         df = direction_of_arrival.MUSICDOA1D().get_directions(array, acm, 1, wv)
         assert isinstance(df, pl.DataFrame)
-        assert len(df.columns) == 2
-        assert df.columns == ["theta", "Q"]
+        assert len(df.columns) == 3
+        assert df.columns == ["theta", "Q", "Q_db"]
 
         assert np.isclose(df.sort("Q", descending=True)["theta"][0], 30.0)
