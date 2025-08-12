@@ -43,6 +43,7 @@ dependencies = [
   "plotly",
   "tqdm",
   "loguru",
+  "streamlit",
 ]
 
 [project.urls]
