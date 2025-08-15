@@ -18,15 +18,25 @@ st.sidebar.header("Configs...")
 num_antenna = st.sidebar.slider("num antennas", 1, 1000, 100)
 antenna_spacing = st.sidebar.slider("antenna_spacing (wvs)", 0.25, 10.0, 0.5)
 
-mid_freq = 1e9
+center_freq_ghz = 1.0
+mid_freq = 1e9 * center_freq_ghz
+bandwidth_mhz = 2
 
 num_interferers = st.sidebar.slider("num interferers", 0, 10, 1)
 num_eigenvectors_to_null = st.sidebar.slider("eigenvecs to null", 0, 50, 1)
 interferers = []
 
 with st.sidebar.expander("Source Parameters", expanded=True):
-    source_f_center = st.slider("source center frequency (GHz)", 0.9, 1.1, 1.0)
-    source_f_bandwidth = st.slider("source frequency bandwidth (MHz)", 1, 100, 10)
+    source_f_center = st.slider(
+        "source center frequency (GHz)",
+        float(center_freq_ghz - bandwidth_mhz / 1000),
+        float(center_freq_ghz + bandwidth_mhz / 1000),
+        float(center_freq_ghz),
+        step=bandwidth_mhz / (10 * 1000),
+    )
+    source_f_bandwidth = st.slider(
+        "source frequency bandwidth (MHz)", 0.1, float(bandwidth_mhz), 1.0, step=0.1
+    )
     source_power = st.slider("source power", 0.1, 100.0, 1.0)
     source_theta_signal_deg = st.slider("source DoA degrees", 0, 90, 40)
     source_f_low = 1e9 * (source_f_center - 0.5 * source_f_bandwidth / 1_000)
@@ -41,9 +51,9 @@ with st.sidebar.expander(
         # Create unique keys for each slider to avoid conflicts
         freq_center = st.slider(
             f"Frequency_Center {i + 1} (GHz)",
-            min_value=0.9,
-            max_value=1.1,
-            value=1.0 - i * 0.001,  # Default values that vary slightly
+            min_value=center_freq_ghz - bandwidth_mhz / 1_000,
+            max_value=center_freq_ghz + bandwidth_mhz / 1_000,
+            value=center_freq_ghz - i * 0.001,  # Default values that vary slightly
             step=0.0001,
             key=f"freq_center_{i}",
         )
@@ -51,15 +61,15 @@ with st.sidebar.expander(
         freq_bandwidth = st.slider(
             f"Frequency_Bandwidth {i + 1} (MHz)",
             min_value=1,
-            max_value=100,
-            value=30 + i * 1,  # Default values that vary slightly
+            max_value=bandwidth_mhz,
+            value=10 + i * 1,  # Default values that vary slightly
             step=1,
             key=f"freq_bandwidth_{i}",
         )
         power = st.slider(
             f"Power {i + 1}",
             min_value=1.0,
-            max_value=100.0,
+            max_value=1000000.0,
             value=10 - i * 0.1,  # Decreasing amplitude by default
             step=1.0,
             key=f"power_{i}",
@@ -92,12 +102,12 @@ interferer_f_high = [inter["frequency_high"] for inter in interferers]
 interferer_theta_signal_deg = [inter["direction"] for inter in interferers]
 interferer_power = [inter["power"] for inter in interferers]
 sigma = st.sidebar.slider("noise sigma", 0.0, 5.0, 0.5)
-
+lambda_ridge = st.sidebar.slider("ridge lambda", 0.0, 5.0, 0.0, step=0.1)
 wv = [constants.c / mid_freq]
 d = wv[0] * antenna_spacing
 array = arrays.UniformLinearArray(num_antenna, d)
 
-fs = 4e8  # 400 MHz
+fs = 2 * bandwidth_mhz * 1e6
 
 t = np.linspace(0, 1001 / fs, 1_000)
 X_true = np.array(
@@ -150,10 +160,22 @@ theta_rad = np.deg2rad(source_theta_signal_deg)
 w = array.steering_vector(theta_rad, np.array([constants.c / mid_freq]))
 
 oblique_proj = w @ np.linalg.inv(w.conj().T @ orth_proj @ w) @ w.conj().T @ orth_proj
-Pw = np.identity(A.shape[0]) - w @ np.linalg.inv(w.conj().T @ w) @ w.conj().T
+w = array.steering_vector(
+    theta_rad,
+    constants.c / np.array([mid_freq]),
+)
+Pw = (
+    np.identity(A.shape[0])
+    - w
+    @ np.linalg.inv(w.conj().T @ w + lambda_ridge * np.identity(w.shape[1]))
+    @ w.conj().T
+)
 PwA = Pw @ A
 new_proj = (
-    np.identity(A.shape[0]) - A @ np.linalg.inv(PwA.conj().T @ PwA) @ PwA.conj().T
+    np.identity(PwA.shape[0])
+    - PwA
+    @ np.linalg.inv(PwA.conj().T @ PwA + lambda_ridge * np.identity(PwA.shape[1]))
+    @ PwA.conj().T
 )
 
 
@@ -165,6 +187,7 @@ def plot_spectrum(signals, labels, fs, f_carrier, true_signal):
     true_power_db = 10 * np.log10(
         true_power_spectrum + 1e-12
     )  # Adding small number to avoid log(0)
+    true_power_db -= true_power_db.max()
 
     for i, (signal, label) in enumerate(zip(signals, labels)):
         # FFT along time axis
@@ -174,7 +197,7 @@ def plot_spectrum(signals, labels, fs, f_carrier, true_signal):
         power_db = 10 * np.log10(
             power_spectrum + 1e-12
         )  # Adding small number to avoid log(0)
-        # power_db -= np.max(power_db)
+        power_db -= np.max(power_db)
         axes[0, i].plot(fft_freq, power_db, label=label)
         axes[0, i].set_xlabel("Frequency (Hz)")
         axes[0, i].set_ylabel("Power (dB)")
@@ -377,7 +400,7 @@ st.text(evals[-(num_interferers + 1) :])
 
 
 theta_degrees = source_theta_signal_deg
-theta = theta_degrees / 180 * np.pi
+theta = np.deg2rad(theta_degrees)
 
 w = array.steering_vector(
     theta, constants.c / (source_f_low + 0.5 * (source_f_high - source_f_low))
@@ -387,6 +410,7 @@ int1_steer = array.steering_vector(
     constants.c
     / (interferer_f_low[0] + 0.5 * (interferer_f_high[0] - interferer_f_low[0])),
 )
+
 relevant_evals = evals[-(num_interferers + 10) :]
 relevant_evecs = evecs[:, -(num_interferers + 10) :]
 direction_correlations = pd.DataFrame(
