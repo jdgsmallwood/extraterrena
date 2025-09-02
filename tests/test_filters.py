@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from spatial_filtering import filters
+from extraterrena import filters
 
 
 @pytest.fixture

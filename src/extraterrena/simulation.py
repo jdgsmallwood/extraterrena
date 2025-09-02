@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from spatial_filtering import arrays, constants
+from extraterrena import arrays, constants
 
 
 def simulate_linear_array_construct(

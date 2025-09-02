@@ -1,6 +1,6 @@
 import numpy as np
 import polars as pl
-from spatial_filtering import arrays
+from extraterrena import arrays
 from abc import ABC
 from tqdm import tqdm
 import itertools
@@ -8,30 +8,26 @@ from loguru import logger
 
 
 def calc_q(
-        steer_vec: np.ndarray, noise_subspace_acm: np.ndarray,
-    ) -> float:
-        """Calculates the Q factor for a particular steering vector and number of interferers.
+    steer_vec: np.ndarray,
+    noise_subspace_acm: np.ndarray,
+) -> float:
+    """Calculates the Q factor for a particular steering vector and number of interferers.
 
-        This is the inverse of the MUSIC factor describer in section 9.3.2.1 of Van Trees Optimum Array Processing
-        so that likely directions are found as peaks rather than as valleys.
+    This is the inverse of the MUSIC factor describer in section 9.3.2.1 of Van Trees Optimum Array Processing
+    so that likely directions are found as peaks rather than as valleys.
 
-        :param steer_vec: Steering vector for the array to a particular direction.
-        :type steer_vec: np.ndarray
-        :param noise_subspace_acm: Noise subspace ACM from eigendecomposition of covariance matrix.
-        :type noise_subspace_acm: np.ndarray
-        :return: Q-factor. Higher value means less energy in the direction of the steering vector.
-        :rtype: float
-        """
-        Q = 1 / np.abs(
-            steer_vec.conj().T
-            @ noise_subspace_acm
-            @ steer_vec
-        )
-        return Q
+    :param steer_vec: Steering vector for the array to a particular direction.
+    :type steer_vec: np.ndarray
+    :param noise_subspace_acm: Noise subspace ACM from eigendecomposition of covariance matrix.
+    :type noise_subspace_acm: np.ndarray
+    :return: Q-factor. Higher value means less energy in the direction of the steering vector.
+    :rtype: float
+    """
+    Q = 1 / np.abs(steer_vec.conj().T @ noise_subspace_acm @ steer_vec)
+    return Q
 
 
 class MUSICBase(ABC):
-
     def convert_to_dbs(self, df: pl.DataFrame, column_name: str = "Q") -> pl.DataFrame:
         """Converts column of dataframe to decibels.
 
@@ -86,7 +82,9 @@ class MUSICDOA1D(MUSICBase):
         _, evecs = np.linalg.eigh(acm)
         theta_range = np.linspace(theta_min_deg, theta_max_deg, theta_steps)
 
-        noise_subspace_acm = evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        noise_subspace_acm = (
+            evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        )
         output = []
         for theta in theta_range:
             steer_vec = array.steering_vector(np.deg2rad(theta), wavelength).T
@@ -99,7 +97,6 @@ class MUSICDOA1D(MUSICBase):
 
 
 class MUSICDOA2D(MUSICBase):
-
     def get_directions(
         self,
         array: arrays.Array,
@@ -143,23 +140,28 @@ class MUSICDOA2D(MUSICBase):
         theta_range = np.linspace(theta_min_deg, theta_max_deg, theta_steps)
         phi_range = np.linspace(phi_min_deg, phi_max_deg, phi_steps)
 
-        noise_subspace_acm = evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        noise_subspace_acm = (
+            evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        )
         output = []
 
-        THRESHOLD_SET = False        
+        THRESHOLD_SET = False
         threshold = 0
-        for phi, theta in tqdm(itertools.product(phi_range, theta_range), total=len(phi_range) * len(theta_range)):
+        for phi, theta in tqdm(
+            itertools.product(phi_range, theta_range),
+            total=len(phi_range) * len(theta_range),
+        ):
             steer_vec = array.steering_vector(
                 [np.deg2rad(phi), np.deg2rad(theta)], wavelength
             )
 
             Q = calc_q(steer_vec, noise_subspace_acm)
-            
+
             if not THRESHOLD_SET or Q > threshold:
                 output.append({"phi": phi, "theta": theta, "Q": Q})
-            
+
             if len(output) > 10_000 and not THRESHOLD_SET:
-                # To avoid adding millions of records - only record if it's in the top 40% of 
+                # To avoid adding millions of records - only record if it's in the top 40% of
                 # observations seen thus far.
                 THRESHOLD_SET = True
                 threshold = pl.from_records(output)["Q"].quantile(0.6)
@@ -171,7 +173,6 @@ class MUSICDOA2D(MUSICBase):
 
 
 class MUSICNF2D(MUSICBase):
-
     def get_direction(
         self,
         array: arrays.Array,
@@ -227,7 +228,9 @@ class MUSICNF2D(MUSICBase):
         theta_space = np.linspace(theta_min_deg, theta_max_deg, theta_steps)
         phi_space = np.linspace(phi_min_deg, phi_max_deg, phi_steps)
 
-        noise_subspace_acm = evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        noise_subspace_acm = (
+            evecs[:, :-num_interferers] @ evecs[:, :-num_interferers].conj().T
+        )
         output = []
         for r in r_space:
             for theta in theta_space:

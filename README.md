@@ -1,7 +1,7 @@
-# spatial-filtering
+# extraterrena
 
-[![PyPI - Version](https://img.shields.io/pypi/v/spatial-filtering.svg)](https://pypi.org/project/spatial-filtering)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/spatial-filtering.svg)](https://pypi.org/project/spatial-filtering)
+[![PyPI - Version](https://img.shields.io/pypi/v/extraterrena.svg)](https://pypi.org/project/extraterrena)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/extraterrena.svg)](https://pypi.org/project/extraterrena)
 
 -----
 
@@ -11,7 +11,7 @@ This might be to remove something like radio frequency interference at a telesco
 
 ## Table of Contents
 
-- [spatial-filtering](#spatial-filtering)
+- [extraterrena](#extraterrena)
   - [Summary](#summary)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
@@ -20,9 +20,9 @@ This might be to remove something like radio frequency interference at a telesco
 ## Installation
 
 ```console
-pip install spatial-filtering
+pip install extraterrena
 ```
 
 ## License
 
-`spatial-filtering` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`extraterrena` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

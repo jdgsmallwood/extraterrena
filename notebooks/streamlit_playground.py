@@ -1,4 +1,4 @@
-from spatial_filtering import arrays, constants, simulation
+from nullaterra import arrays, constants, simulation
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -8,11 +8,13 @@ import importlib
 importlib.reload(arrays)
 importlib.reload(constants)
 importlib.reload(simulation)
+
 st.set_page_config(
     page_title="Signal Playground",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.title("Signal Playground")
 st.sidebar.header("Configs...")
 
 num_antenna = st.sidebar.slider("num antennas", 1, 1000, 100)
@@ -33,6 +35,7 @@ with st.sidebar.expander("Source Parameters", expanded=True):
         float(center_freq_ghz + bandwidth_mhz / 1000),
         float(center_freq_ghz),
         step=bandwidth_mhz / (10 * 1000),
+        format="%0.4f",
     )
     source_f_bandwidth = st.slider(
         "source frequency bandwidth (MHz)", 0.1, float(bandwidth_mhz), 1.0, step=0.1
@@ -56,20 +59,21 @@ with st.sidebar.expander(
             value=center_freq_ghz - i * 0.001,  # Default values that vary slightly
             step=0.0001,
             key=f"freq_center_{i}",
+            format="%0.4f",
         )
 
         freq_bandwidth = st.slider(
             f"Frequency_Bandwidth {i + 1} (MHz)",
-            min_value=1,
-            max_value=bandwidth_mhz,
-            value=10 + i * 1,  # Default values that vary slightly
-            step=1,
+            min_value=0.1,
+            max_value=float(bandwidth_mhz),
+            value=1.0 + i * 1.0,  # Default values that vary slightly
+            step=0.1,
             key=f"freq_bandwidth_{i}",
         )
         power = st.slider(
             f"Power {i + 1}",
             min_value=1.0,
-            max_value=1000000.0,
+            max_value=1000.0,
             value=10 - i * 0.1,  # Decreasing amplitude by default
             step=1.0,
             key=f"power_{i}",
@@ -231,12 +235,11 @@ def plot_spectrum(signals, labels, fs, f_carrier, true_signal):
 
 fig = plot_spectrum(
     [
-        ((w.conj().T) @ (new_proj @ X))[0].flatten(),
         ((w.conj().T) @ (X))[0].flatten(),
         ((w.conj().T) @ (orth_proj @ X))[0].flatten(),
         ((w.conj().T) @ (oblique_proj @ X))[0].flatten(),
     ],
-    ["new", "w/ int", "orth", "oblique"],
+    ["w/ int", "orth", "oblique"],
     fs,
     (source_f_low + 0.5 * (source_f_high - source_f_low)),
     ((w.conj().T) @ (X_true))[0].flatten(),
@@ -319,7 +322,6 @@ projectors = {
     "identity": np.identity(num_antenna),
     "orthogonal": orth_proj,
     "oblique": oblique_proj,
-    "new": new_proj,
 }
 
 w = array.steering_vector(theta, constants.c / mid_freq)

@@ -3,11 +3,10 @@ import polars as pl
 import pytest
 import random
 
-from spatial_filtering import arrays, constants, simulation, direction_of_arrival
+from extraterrena import arrays, constants, simulation, direction_of_arrival
 
 
 class TestMusicDoA1D:
-
     def test_music_doa_output_format(self):
         np.random.seed(42)
 

@@ -1,4 +1,4 @@
-from spatial_filtering import utils
+from extraterrena import utils
 import pytest
 import numpy as np
 

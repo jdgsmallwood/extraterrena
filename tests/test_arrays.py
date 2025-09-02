@@ -1,13 +1,12 @@
 import numpy as np
 import pytest
 
-from spatial_filtering import arrays, constants
+from extraterrena import arrays, constants
 
 EPS = 0.0001
 
 
 class TestArray:
-
     def test_array_list_positions(self):
         """Test that instantiation works if a list is provided for positions."""
 

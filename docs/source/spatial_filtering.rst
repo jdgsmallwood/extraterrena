@@ -1,61 +1,61 @@
-spatial\_filtering package
+nullaterra package
 ==========================
 
 Submodules
 ----------
 
-spatial\_filtering.arrays module
+nullaterra.arrays module
 --------------------------------
 
-.. automodule:: spatial_filtering.arrays
+.. automodule:: nullaterra.arrays
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.constants module
+nullaterra.constants module
 -----------------------------------
 
-.. automodule:: spatial_filtering.constants
+.. automodule:: nullaterra.constants
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.direction\_of\_arrival module
+nullaterra.direction\_of\_arrival module
 ------------------------------------------------
 
-.. automodule:: spatial_filtering.direction_of_arrival
+.. automodule:: nullaterra.direction_of_arrival
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.filters module
+nullaterra.filters module
 ---------------------------------
 
-.. automodule:: spatial_filtering.filters
+.. automodule:: nullaterra.filters
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.simulation module
+nullaterra.simulation module
 ------------------------------------
 
-.. automodule:: spatial_filtering.simulation
+.. automodule:: nullaterra.simulation
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.utils module
+nullaterra.utils module
 -------------------------------
 
-.. automodule:: spatial_filtering.utils
+.. automodule:: nullaterra.utils
    :members:
    :show-inheritance:
    :undoc-members:
 
-spatial\_filtering.weighting module
+nullaterra.weighting module
 -----------------------------------
 
-.. automodule:: spatial_filtering.weighting
+.. automodule:: nullaterra.weighting
    :members:
    :show-inheritance:
    :undoc-members:
@@ -63,7 +63,7 @@ spatial\_filtering.weighting module
 Module contents
 ---------------
 
-.. automodule:: spatial_filtering
+.. automodule:: nullaterra
    :members:
    :show-inheritance:
    :undoc-members:

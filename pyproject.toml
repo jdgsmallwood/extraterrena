@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "spatial-filtering"
+name = "extraterrena"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -47,19 +47,19 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/jdgsmallwood/spatial-filtering#readme"
-Issues = "https://github.com/jdgsmallwood/spatial-filtering/issues"
-Source = "https://github.com/jdgsmallwood/spatial-filtering"
+Documentation = "https://github.com/jdgsmallwood/extraterrena#readme"
+Issues = "https://github.com/jdgsmallwood/extraterrena/issues"
+Source = "https://github.com/jdgsmallwood/extraterrena"
 
 [tool.hatch.version]
-path = "src/spatial_filtering/__about__.py"
+path = "src/extraterrena/__about__.py"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/spatial_filtering tests}"
+check = "mypy --install-types --non-interactive {args:src/extraterrena tests}"
 
 [tool.hatch.envs.docs]
 dependencies = [
@@ -84,15 +84,15 @@ render = "manim -pql scenes/van_trees_matlab.py VectorProjection3D"
 
 
 [tool.coverage.run]
-source_pkgs = ["spatial_filtering", "tests"]
+source_pkgs = ["extraterrena", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/spatial_filtering/__about__.py",
+  "src/extraterrena/__about__.py",
 ]
 
 [tool.coverage.paths]
-spatial_filtering = ["src/spatial_filtering", "*/spatial-filtering/src/spatial_filtering"]
+spatial_filtering = ["src/extraterrena", "*/spatial-filtering/src/extraterrena"]
 tests = ["tests", "*/spatial-filtering/tests"]
 
 [tool.coverage.report]
