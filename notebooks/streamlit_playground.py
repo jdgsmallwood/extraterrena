@@ -1,4 +1,4 @@
-from nullaterra import arrays, constants, simulation
+from extraterrena import arrays, constants, simulation
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
