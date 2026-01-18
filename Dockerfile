@@ -23,7 +23,7 @@ COPY . .
 
 # Update PATH to include the local user bin where streamlit lives
 ENV PATH=/root/.local/bin:$PATH
-ENV STREAMLIT_CLIENT_TOOLBARMODE=viewer
+ENV STREAMLIT_CLIENT_TOOLBARMODE=minimal
 
 EXPOSE 8501
 
