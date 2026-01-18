@@ -27,4 +27,4 @@ ENV PATH=/root/.local/bin:$PATH
 EXPOSE 8501
 
 # Run with lean settings
-ENTRYPOINT ["streamlit", "run", "notebooks/streamlit_playground.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]
+ENTRYPOINT ["STREAMLIT_CLIENT_TOOLBARMODE=viewer", "streamlit", "run", "notebooks/streamlit_playground.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]
