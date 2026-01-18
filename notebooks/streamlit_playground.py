@@ -17,7 +17,7 @@ st.set_page_config(
 st.title("Signal Playground")
 st.sidebar.header("Configs...")
 
-num_antenna = st.sidebar.slider("num antennas", 1, 1000, 100)
+num_antenna = st.sidebar.slider("num antennas", 1, 1000, 10)
 antenna_spacing = st.sidebar.slider("antenna_spacing (wvs)", 0.25, 10.0, 0.5)
 
 center_freq_ghz = 1.0
