@@ -23,8 +23,9 @@ COPY . .
 
 # Update PATH to include the local user bin where streamlit lives
 ENV PATH=/root/.local/bin:$PATH
+ENV STREAMLIT_CLIENT_TOOLBARMODE=viewer
 
 EXPOSE 8501
 
 # Run with lean settings
-ENTRYPOINT ["STREAMLIT_CLIENT_TOOLBARMODE=viewer", "streamlit", "run", "notebooks/streamlit_playground.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]
+ENTRYPOINT ["streamlit", "run", "notebooks/streamlit_playground.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]
